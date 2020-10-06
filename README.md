@@ -8,7 +8,9 @@ Step 1:
 
 This will install the dependencies from the package.json
 
+Step 2:
+
 ### `npm start`
 
-Launches the application for testing in [deployment](http://localhost:3000/) 
+Launches the application for testing in [http://localhost:3000/](http://localhost:3000/) 
 
