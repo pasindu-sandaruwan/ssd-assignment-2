@@ -1,3 +1,6 @@
+/*
+Utilities to process the URL queries
+ */
 export function toParams(query) {
     const q = query.replace(/^\??\//, '');
 

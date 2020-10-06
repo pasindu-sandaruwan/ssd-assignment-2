@@ -1,9 +1,14 @@
+/*
+Implementation to perform the Github sign in and Repository creation
+ */
 import React, {useEffect, useState} from 'react';
 import {render} from 'react-dom'
 import axios from 'axios';
 import GitHubLogin from "../auth/github-login.component";
 
 const ProjectManager = () =>{
+
+    //Initialize the state values
     const[accessToken, setAccessToken] = useState("");
     const[githubCode, setGithubCode] = useState("")
     const[name, setName] = useState("");
@@ -11,7 +16,6 @@ const ProjectManager = () =>{
     const[gitIgnore, setGitIgnore] = useState("");
     const[visibility, setVisibility] = useState("");
 
-    //set project attributes
 
     useEffect(()=>{
 
@@ -36,56 +40,61 @@ const ProjectManager = () =>{
 
     /*-------------------------------*/
 
+    /*
+        Function to create a github repository by calling the github resource server
+     */
     const onInitializeProject = (e)=>{
         e.preventDefault();
 
         console.log(name + description + visibility + gitIgnore + githubCode)
 
-        const header = {
-            headers : {
-                Accept : 'application/vnd.github.v3+json',
-                Authorization: `Bearer ${accessToken}`
-            }
-        }
-
+        //set the body with data
         const data = {
-            name : name,
-            description : description,
-            gitignore_template : gitIgnore,
-            visibility : visibility
+            name : name, //name of the repository
+            description : description, //description of the repository
+            gitignore_template : gitIgnore, //gitignore template name
+            visibility : visibility //the visibility to set a public or private repository
         }
 
         console.log(accessToken)
+
+        //Call the API to create a github repository
         axios.post("https://api.github.com/user/repos", data,{
             headers:{
                 'Content-Type': 'application/json',
-                Accept : 'application/vnd.github.v3+json',
-                Authorization: `Bearer ${accessToken}`
+                Accept : 'application/vnd.github.v3+json', //set the accept header
+                Authorization: `Bearer ${accessToken}` //send the access token as a bearer token
             }
         } )
             .then(res=>{
                 console.log(res.data)
+
+                //From the response data, pop up the git hub created project in a new tab
                 window.open("https://github.com/" + res.data.full_name, "_blank")
                 alert("Success");
 
             })
             .catch(err=>{
                 console.log(err);
+                alert("Error in creating the repository")
             })
 
     }
 
     const onSuccess = (response)=>{
         console.log(response);
+
+        //set the authorization code returned by github
         setGithubCode(response.code);
 
+        //create the request body with client id, client secret and code
         const data = {
             "client_id" : "715b876ce17dc7050d42",
             "client_secret" : "d889105fe5f309c3eed9ed00d15e1212454936b8",
             "code" : response.code
         }
 
-
+        //send the authorization code returned by github to exchange it with an access token
         axios.post("https://cors-anywhere.herokuapp.com/https://github.com/login/oauth/access_token", data)
             .then(res=>{
                 console.log("token" + res.data)
@@ -96,10 +105,14 @@ const ProjectManager = () =>{
             })
     }
 
+    //show error on failure
     const onFailure = (response)=>{
-        console.log(response)
+        console.log(response);
+        alert("Error in signing in");
     }
 
+    //function used to detach the access token from the returned response string
+    //this function will detach the token after the & character
     const detachToken = (tokenResponse) =>{
         let newString = tokenResponse.substring(13, tokenResponse.length)
         let splitedString = newString.split("&");

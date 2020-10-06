@@ -1,6 +1,8 @@
-import logo from './logo.svg';
+/*
+Main file
+ */
+//import the required dependencies
 import './App.css';
-
 import ProjectManager from "./components/project-manager.component";
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';

@@ -1,3 +1,6 @@
+/*
+This code allows the client application to pop up a window at the point of authorization
+ */
 import { toParams, toQuery } from '../utils';
 
 class PopupWindow {
@@ -36,16 +39,14 @@ class PopupWindow {
                         return;
                     }
 
+                    //replace the url character values with a space
                     const params = toParams(popup.location.search.replace(/^\?/, ''));
 
                     resolve(params);
 
                     this.close();
                 } catch (error) {
-                    /*
-                     * Ignore DOMException: Blocked a frame with origin from accessing a
-                     * cross-origin frame.
-                     */
+                    console.log(error);
                 }
             }, 500);
         });
@@ -58,10 +59,12 @@ class PopupWindow {
         }
     }
 
+    //response after function executes
     then(...args) {
         return this.promise.then(...args);
     }
 
+    //catch for errors
     catch(...args) {
         return this.promise.then(...args);
     }
